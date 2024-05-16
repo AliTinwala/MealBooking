@@ -25,5 +25,10 @@ namespace MEAL_2024_API.Models
 
         public DateTime? ModifiedDate { get; set; }
 
+        public string Token { get; set; }
+
+        public string? RefreshedToken { get; set; }
+        public DateTime RefreshTokenExpiryTime {  get; set; }
+
     }
 }
