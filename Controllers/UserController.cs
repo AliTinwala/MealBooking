@@ -3,6 +3,7 @@ using MEAL_2024_API.DTO;
 using MEAL_2024_API.Models;
 using Microsoft.AspNetCore.Mvc;
 using MEAL_2024_API.Services.Interfaces;
+using MEAL_2024_API.Context;
 
 namespace MEAL_2024_API.Controllers
 {
@@ -13,11 +14,13 @@ namespace MEAL_2024_API.Controllers
     
         private readonly IAuthService _authService;
         private readonly IUserService _userService;
-
-        public UserController(IAuthService authService, IUserService userService)
+    
+        public UserController(IAuthService authService, IUserService userService
+            , IConfiguration configuration,
+            IEmailService emailService,AppDbContext authContext)
         {
             _authService = authService;
-            _userService = userService;
+            _userService = userService; 
         }
 
         [HttpPost("authenticate")]
@@ -63,6 +66,52 @@ namespace MEAL_2024_API.Controllers
             await _userService.RegisterUserAsync(userObj);
 
             return Ok(new { Message = "User Registered!" });
+        }
+
+        [HttpPost("send-reset-email/{email}")]
+        public async Task<IActionResult> SendEmail(string email)
+        {
+            try
+            {
+                Console.WriteLine($"Received email:{email}"); 
+                await _userService.SendResetPasswordEmailAsync(email);
+                return Ok(new
+                {
+                    StatusCode = 200,
+                    Message = "Email Sent!"
+                });
+            }
+            catch (Exception ex)
+            {
+                return NotFound(new
+                {
+                    StatusCode = 404,
+                    Message = ex.Message
+                });
+            }
+        }
+
+        [HttpPost("reset-password")]
+        public async Task<IActionResult> ResetPassword(ResetPasswordDTO resetPasswordDTO)
+        {
+            try
+            {
+                await _userService.ResetPasswordAsync(resetPasswordDTO);
+                return Ok(new
+                {
+                    StatusCode = 200,
+                    Message = "Password Reset Successfully!"
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new
+                {
+                    StatusCode = 400,
+                    Message = ex.Message
+                });
+            }
+
         }
     }
 }

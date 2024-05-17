@@ -33,6 +33,7 @@ builder.Services.AddDbContext<AppDbContext>(option =>
 
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddTransient(typeof(IRepository<>), typeof(Repository<>));
 
 builder.Services.AddAuthentication(x =>
