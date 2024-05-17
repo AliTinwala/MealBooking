@@ -10,9 +10,9 @@ namespace MealBookingAPI.Data.Repository.IRepository
 {
     public interface IRepository<TEntity> where TEntity : class
     {
-        Task<TEntity> InsertAsync(TEntity entity);
-        Task<bool> UpdateAsync(TEntity entity);
-        Task<bool> DeleteAsync(TEntity entity);
+        Task<int> InsertAsync(TEntity entity);
+        Task<int> UpdateAsync(int id, TEntity entity);
+        Task<int> DeleteAsync(TEntity entity);
         Task<TEntity> GetByIdAsync(int id);
         Task<IEnumerable<TEntity>> GetAll();
     }

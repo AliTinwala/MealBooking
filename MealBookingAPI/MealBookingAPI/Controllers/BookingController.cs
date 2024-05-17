@@ -23,9 +23,15 @@ namespace MealBookingAPI.Application.Controllers
         public async Task<IActionResult> CreateTEntity(BookingRequestDTO request)
         {
             var booking = _mapper.Map<BookingRequestDTO, Booking>(request);
-            await _repository.InsertAsync(booking);
-            var bookingDto = _mapper.Map<Booking, BookingRequestDTO>(booking);
-            return Ok(bookingDto);
+            var inserted = await _repository.InsertAsync(booking);
+            if(inserted > 0)
+            {
+                return Ok("Booking added");
+            }
+            else
+            {
+                return BadRequest("Booking not added");
+            }
         }
         [HttpGet]
         public async Task<IActionResult> GetBookings()
@@ -46,35 +52,38 @@ namespace MealBookingAPI.Application.Controllers
         {
             var booking = await _repository.GetByIdAsync(id);
             var deleted = await _repository.DeleteAsync(booking);
-            var entity = _mapper.Map<Booking, BookingRequestDTO>(booking);
-            if(deleted != false)
+            if(deleted > 0)
             {
-                return Ok(entity);
+                return Ok("Deleted Successfully");
             }
             else
             {
-                return BadRequest();
+                return BadRequest("Deletion unsuccessful");
             }
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateBooking(int id,[FromBody] Booking booking)
+        public async Task<IActionResult> UpdateBooking([FromRoute] int id, [FromBody] BookingRequestDTO bookingDto)
         {
-            try
+            var existingBooking = await _repository.GetByIdAsync(id);
+
+            if (existingBooking == null)
             {
-                if (id != booking.Id)
-                    return BadRequest("Booking id mismatch");
-
-                var bookingToUpdate = await _repository.GetByIdAsync(id);
-
-                if (bookingToUpdate == null)
-                    return NotFound($"Booking with Id = {id} not found");
-
-                return await _repository
+                throw new InvalidOperationException("Booking not found");
             }
-            catch(Exception)
+
+            // Update the existingProduct entity with data from productDto
+            _mapper.Map(bookingDto, existingBooking);
+             
+            var updated = await _repository.UpdateAsync(id, existingBooking);
+
+            if(updated > 0)
             {
-                return BadRequest();
+                return Ok("Booking updated");
+            }
+            else
+            {
+                return BadRequest("Booking not updated");
             }
         }
     }
