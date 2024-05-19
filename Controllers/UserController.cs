@@ -1,9 +1,9 @@
-﻿using MEAL_2024_API.Context;
+﻿
 using MEAL_2024_API.DTO;
 using MEAL_2024_API.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using MEAL_2024_API.Services.Interfaces;
+using MEAL_2024_API.Context;
 
 namespace MEAL_2024_API.Controllers
 {
@@ -11,54 +11,107 @@ namespace MEAL_2024_API.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        private readonly AppDbContext _authContext;
-
-        public UserController(AppDbContext appDbContext)
+    
+        private readonly IAuthService _authService;
+        private readonly IUserService _userService;
+    
+        public UserController(IAuthService authService, IUserService userService
+            , IConfiguration configuration,
+            IEmailService emailService,AppDbContext authContext)
         {
-            _authContext = appDbContext;
-
+            _authService = authService;
+            _userService = userService; 
         }
 
         [HttpPost("authenticate")]
         public async Task<IActionResult> Authenticate([FromBody] UseLoginDTO userObj)
         {
-            if(userObj == null)
+            if (userObj == null)
             {
                 return BadRequest();
             }
-            var user = await _authContext.Users.
-                FirstOrDefaultAsync(x => x.EmailId == userObj.Email && x.Password == userObj.Password);
-            if(user == null)
+
+            var token = await _authService.AuthenticateAsync(userObj);
+            if (token == null)
             {
-                return NotFound(new { Message = "User Not Found!" });
+                return NotFound(new { Message = "User Not Found or Password is Incorrect!" });
             }
 
-            return Ok(new
+            return Ok(new TokenApiDTO
             {
-                Message="Login Success!"
+                AccessToken = token,
+                RefreshToken = _authService.CreateRefreshToken()
             });
         }
 
         [HttpPost("register")]
         public async Task<IActionResult> RegisterUser([FromBody] User userObj)
         {
-            if(userObj == null)
+            if (userObj == null)
             {
                 return BadRequest();
             }
 
-            userObj.UserId = new Guid();
-            userObj.RegistrationDate = DateTime.Now;
-            userObj.ModifiedDate = DateTime.Now;
-
-            await _authContext.Users.AddAsync(userObj);
-            await _authContext.SaveChangesAsync();
-            return Ok(new
+            if (await _userService.CheckEmailExistAsync(userObj.EmailId))
             {
-                Message = "User Registered!"
-            });
+                return BadRequest(new { Message = "Email Already Exists!" });
+            }
+
+            var passwordValidationMessage = _userService.CheckPasswordStrength(userObj.Password);
+            if (!string.IsNullOrEmpty(passwordValidationMessage))
+            {
+                return BadRequest(new { Message = passwordValidationMessage });
+            }
+
+            await _userService.RegisterUserAsync(userObj);
+
+            return Ok(new { Message = "User Registered!" });
         }
 
+        [HttpPost("send-reset-email/{email}")]
+        public async Task<IActionResult> SendEmail(string email)
+        {
+            try
+            {
+                Console.WriteLine($"Received email:{email}"); 
+                await _userService.SendResetPasswordEmailAsync(email);
+                return Ok(new
+                {
+                    StatusCode = 200,
+                    Message = "Email Sent!"
+                });
+            }
+            catch (Exception ex)
+            {
+                return NotFound(new
+                {
+                    StatusCode = 404,
+                    Message = ex.Message
+                });
+            }
+        }
 
+        [HttpPost("reset-password")]
+        public async Task<IActionResult> ResetPassword(ResetPasswordDTO resetPasswordDTO)
+        {
+            try
+            {
+                await _userService.ResetPasswordAsync(resetPasswordDTO);
+                return Ok(new
+                {
+                    StatusCode = 200,
+                    Message = "Password Reset Successfully!"
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new
+                {
+                    StatusCode = 400,
+                    Message = ex.Message
+                });
+            }
+
+        }
     }
 }
