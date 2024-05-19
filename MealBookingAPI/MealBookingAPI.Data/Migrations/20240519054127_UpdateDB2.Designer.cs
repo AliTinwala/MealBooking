@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MealBookingAPI.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240510102830_UpdatedDB")]
-    partial class UpdatedDB
+    [Migration("20240519054127_UpdateDB2")]
+    partial class UpdateDB2
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -24,7 +24,7 @@ namespace MealBookingAPI.Data.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("MealBookingAPI.Data.Booking", b =>
+            modelBuilder.Entity("MealBookingAPI.Data.Models.Booking", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -38,11 +38,9 @@ namespace MealBookingAPI.Data.Migrations
                     b.Property<DateTime>("Booking_For_Date_Time")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("Booking_Till_Date_Time")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("Calendar_Id")
-                        .HasColumnType("int");
+                    b.Property<string>("Booking_Type")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Coupon_Id")
                         .HasColumnType("int");
