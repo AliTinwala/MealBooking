@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using MealBookingAPI.Application.DTOs;
+using MealBookingAPI.Application.Services.IServices;
 using MealBookingAPI.Data.Models;
 using MealBookingAPI.Data.Repository.IRepository;
 using Microsoft.AspNetCore.Mvc;
@@ -12,11 +13,13 @@ namespace MealBookingAPI.Application.Controllers
     {
         private readonly IRepository<Booking> _repository;
         private readonly IMapper _mapper;
+        private readonly IBookingServices _bookingServices;
 
-        public BookingController(IRepository<Booking> repository, IMapper mapper)
+        public BookingController(IRepository<Booking> repository, IMapper mapper, IBookingServices bookingServices)
         {
             _repository = repository;
             _mapper = mapper;
+            _bookingServices = bookingServices;
         }
 
         [HttpPost]
@@ -24,7 +27,7 @@ namespace MealBookingAPI.Application.Controllers
         {
             var booking = _mapper.Map<BookingRequestDTO, Booking>(request);
             var inserted = await _repository.InsertAsync(booking);
-            if(inserted > 0)
+            if (inserted > 0)
             {
                 return Ok("Booking added");
             }
@@ -37,7 +40,7 @@ namespace MealBookingAPI.Application.Controllers
         public async Task<IActionResult> GetBookings()
         {
             var bookingList = await _repository.GetAll();
-            var bookingDto = _mapper.Map<List<Booking>,List<BookingRequestDTO>>(bookingList.ToList());
+            var bookingDto = _mapper.Map<List<Booking>, List<BookingRequestDTO>>(bookingList.ToList());
             if (bookingDto == null)
             {
                 return NotFound();
@@ -52,7 +55,7 @@ namespace MealBookingAPI.Application.Controllers
         {
             var booking = await _repository.GetByIdAsync(id);
             var deleted = await _repository.DeleteAsync(booking);
-            if(deleted > 0)
+            if (deleted > 0)
             {
                 return Ok("Deleted Successfully");
             }
@@ -74,10 +77,10 @@ namespace MealBookingAPI.Application.Controllers
 
             // Update the existingProduct entity with data from productDto
             _mapper.Map(bookingDto, existingBooking);
-             
+
             var updated = await _repository.UpdateAsync(id, existingBooking);
 
-            if(updated > 0)
+            if (updated > 0)
             {
                 return Ok("Booking updated");
             }
@@ -85,6 +88,13 @@ namespace MealBookingAPI.Application.Controllers
             {
                 return BadRequest("Booking not updated");
             }
+        }
+
+        [HttpGet("exists/{date}")]
+        public async Task<ActionResult<bool>> GetBookingStatus(DateTime date)
+        {
+            var exists = await _bookingServices.BookingExists(date);
+            return exists;
         }
     }
 }
