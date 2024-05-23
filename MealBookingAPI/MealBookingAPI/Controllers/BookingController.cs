@@ -90,11 +90,19 @@ namespace MealBookingAPI.Application.Controllers
             }
         }
 
-        [HttpGet("exists/{date}")]
-        public async Task<ActionResult<bool>> GetBookingStatus(DateTime date)
+        [HttpGet("{user_id}")]
+        public async Task<IActionResult> GetBookingDates(int user_id)
         {
-            var exists = await _bookingServices.BookingExists(date);
-            return exists;
+            var dates = await _bookingServices.GetDates(user_id);
+            if(dates.Count >= 1)
+            {
+                return Ok(dates);
+            }
+            else 
+            {
+                return NotFound("Dates not found");
+            }
+            
         }
     }
 }

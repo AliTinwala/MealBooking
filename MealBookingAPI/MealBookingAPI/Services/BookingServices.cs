@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MealBookingAPI.Application.Services.IServices;
+using MealBookingAPI.Data.Models;
+using MealBookingAPI.Application.DTOs;
 
 namespace MealBookingAPI.Application.Services
 {
@@ -14,11 +16,12 @@ namespace MealBookingAPI.Application.Services
             _dbContext = context;
         }
 
-        [HttpGet("exists/{date}")]
-        public async Task<ActionResult<bool>> BookingExists(DateTime date)
+        public async Task<List<DateTime>> GetDates(int user_id)
         {
-            var exists = await _dbContext.Booking.AnyAsync(b => b.Booking_For_Date_Time.Date == date.Date);
-            return exists;
+            return await _dbContext.Booking
+                .Where(b => b.User_Id == user_id)
+                .Select(b => b.Booking_For_Date_Time)
+                .ToListAsync();
         }
     }
 }
