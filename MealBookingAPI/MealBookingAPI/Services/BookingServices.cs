@@ -4,24 +4,24 @@ using Microsoft.EntityFrameworkCore;
 using MealBookingAPI.Application.Services.IServices;
 using MealBookingAPI.Data.Models;
 using MealBookingAPI.Application.DTOs;
+using MealBookingAPI.Data.Repository.IRepository;
+using AutoMapper;
 
 namespace MealBookingAPI.Application.Services
 {
     public class BookingServices: IBookingServices
     {
-        private readonly AppDbContext _dbContext;
+        private readonly IRepository<Booking> _repository;
 
-        public BookingServices(AppDbContext context)
+        public BookingServices(IRepository<Booking> repository)
         {
-            _dbContext = context;
+            _repository = repository;
         }
 
-        public async Task<List<DateTime>> GetDates(int user_id)
+        public async Task<IEnumerable<DateTime>> GetBookingForDates(Guid user_id)
         {
-            return await _dbContext.Booking
-                .Where(b => b.User_Id == user_id)
-                .Select(b => b.Booking_For_Date_Time)
-                .ToListAsync();
+            var dates = await _repository.GetBookingForDates(user_id);
+            return dates;
         }
     }
 }

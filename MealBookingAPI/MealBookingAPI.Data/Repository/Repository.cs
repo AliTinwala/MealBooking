@@ -7,7 +7,7 @@ namespace MealBookingAPI.Data.Repository
 {
     public class Repository<TEntity> : IRepository<TEntity> where TEntity : class
     {
-        protected readonly DbContext _dbContext;
+        protected readonly AppDbContext _dbContext;
         public Repository(AppDbContext context, IMapper mapper)
         {
             _dbContext = context;
@@ -26,12 +26,12 @@ namespace MealBookingAPI.Data.Repository
         }
 
 
-        public async Task<TEntity> GetByIdAsync(int id)
+        public async Task<TEntity> GetByIdAsync(Guid id)
         {
             return await _dbContext.Set<TEntity>().FindAsync(id);
         }
 
-        public async Task<int> UpdateAsync(int id, TEntity entity)
+        public async Task<int> UpdateAsync(Guid id, TEntity entity)
         {
             _dbContext.Entry(entity).State = EntityState.Modified;
             return await _dbContext.SaveChangesAsync();
@@ -40,6 +40,14 @@ namespace MealBookingAPI.Data.Repository
         public async Task<IEnumerable<TEntity>> GetAll()
         {
             return await _dbContext.Set<TEntity>().ToListAsync();
+        }
+
+        public async Task<IEnumerable<DateTime>> GetBookingForDates(Guid user_id)
+        {
+            return await _dbContext.Booking
+                .Where(b => b.UserId == user_id)
+                .Select(b => b.BookingForDate)
+                .ToListAsync();
         }
     }
 }

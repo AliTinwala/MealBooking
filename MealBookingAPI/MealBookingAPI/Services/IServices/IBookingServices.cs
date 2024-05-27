@@ -5,6 +5,6 @@ namespace MealBookingAPI.Application.Services.IServices
 {
     public interface IBookingServices
     {
-        Task<List<DateTime>> GetDates(int user_id);
+        Task<IEnumerable<DateTime>> GetBookingForDates(Guid user_id);
     }
 }

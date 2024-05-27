@@ -4,6 +4,7 @@ using MealBookingAPI.Application.Services.IServices;
 using MealBookingAPI.Data.Models;
 using MealBookingAPI.Data.Repository.IRepository;
 using Microsoft.AspNetCore.Mvc;
+using System.Linq;
 
 namespace MealBookingAPI.Application.Controllers
 {
@@ -23,13 +24,21 @@ namespace MealBookingAPI.Application.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateTEntity(BookingRequestDTO request)
+        public async Task<IActionResult> CreateTEntity(BookingRequestDTO request,Guid user_id)
         {
-            var booking = _mapper.Map<BookingRequestDTO, Booking>(request);
-            var inserted = await _repository.InsertAsync(booking);
-            if (inserted > 0)
+            if (ModelState.IsValid)
             {
-                return Ok("Booking added");
+                var booking = _mapper.Map<BookingRequestDTO, Booking>(request);
+                booking.UserId = user_id;
+                var inserted = await _repository.InsertAsync(booking);
+                if (inserted <= 0)
+                {
+                    return BadRequest("Booking not added");
+                }
+                else
+                {
+                    return Ok("Booking added");
+                }
             }
             else
             {
@@ -51,8 +60,8 @@ namespace MealBookingAPI.Application.Controllers
             }
         }
         [HttpDelete("{id}")]
-        public async Task<IActionResult> RemoveBooking(int id)
-        {
+        public async Task<IActionResult> RemoveBooking(Guid id)
+        { 
             var booking = await _repository.GetByIdAsync(id);
             var deleted = await _repository.DeleteAsync(booking);
             if (deleted > 0)
@@ -66,7 +75,7 @@ namespace MealBookingAPI.Application.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateBooking([FromRoute] int id, [FromBody] BookingRequestDTO bookingDto)
+        public async Task<IActionResult> UpdateBooking([FromRoute] Guid id, [FromBody] BookingRequestDTO bookingDto)
         {
             var existingBooking = await _repository.GetByIdAsync(id);
 
@@ -91,18 +100,18 @@ namespace MealBookingAPI.Application.Controllers
         }
 
         [HttpGet("{user_id}")]
-        public async Task<IActionResult> GetBookingDates(int user_id)
+        public async Task<IActionResult> GetBookingDates(Guid user_id)
         {
-            var dates = await _bookingServices.GetDates(user_id);
-            if(dates.Count >= 1)
+            var dates = await _bookingServices.GetBookingForDates(user_id);
+            if (dates.Count() > 0)
             {
                 return Ok(dates);
             }
-            else 
+            else
             {
                 return NotFound("Dates not found");
             }
-            
+
         }
     }
 }
