@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MealBookingAPI.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240525045204_initial")]
-    partial class initial
+    [Migration("20240528040133_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
