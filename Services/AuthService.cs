@@ -22,7 +22,7 @@ namespace MEAL_2024_API.Services
             _authContext = authContext;
         }
 
-        public async Task<string> AuthenticateAsync(UseLoginDTO userObj)
+        public async Task<TokenApiDTO> AuthenticateAsync(UseLoginDTO userObj)
         {
             var user = await _authContext.Users.FirstOrDefaultAsync(x => x.EmailId == userObj.Email);
             if (user == null || !PasswordHasher.VerifyPassword(userObj.Password, user.Password))
@@ -42,7 +42,11 @@ namespace MEAL_2024_API.Services
             _authContext.Users.Update(user);
             await _authContext.SaveChangesAsync();
 
-            return token;
+            return new TokenApiDTO
+            {
+                AccessToken = token,
+                RefreshToken = refreshToken
+            };
         }
 
         public string CreateJwtToken(User user)
@@ -74,9 +78,7 @@ namespace MEAL_2024_API.Services
         {
             var tokenBytes = RandomNumberGenerator.GetBytes(64);
             var refreshToken = Convert.ToBase64String(tokenBytes);
-
             var tokenInUser = _authContext.Users.Any(a => a.RefreshedToken == refreshToken);
-
             return tokenInUser ? CreateRefreshToken() : refreshToken;
         }
 

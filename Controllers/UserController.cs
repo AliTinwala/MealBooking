@@ -38,11 +38,7 @@ namespace MEAL_2024_API.Controllers
                 return NotFound(new { Message = "User Not Found or Password is Incorrect!" });
             }
 
-            return Ok(new TokenApiDTO
-            {
-                AccessToken = token,
-                RefreshToken = _authService.CreateRefreshToken()
-            });
+            return Ok(token);
         }
 
         [HttpPost("register")]

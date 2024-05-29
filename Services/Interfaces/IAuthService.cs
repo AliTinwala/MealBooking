@@ -6,7 +6,7 @@ namespace MEAL_2024_API.Services.Interfaces
 {
     public interface IAuthService
     {
-        Task<string> AuthenticateAsync(UseLoginDTO userObj);
+        Task<TokenApiDTO> AuthenticateAsync(UseLoginDTO userObj);
         string CreateJwtToken(User user);
         string CreateRefreshToken();
         ClaimsPrincipal GetPrincipleFromExpiredToken(string token);
