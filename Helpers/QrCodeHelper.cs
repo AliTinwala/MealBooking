@@ -13,15 +13,8 @@ namespace MEAL_2024_API.Helpers
     {
         public string GenerateQrCode(string text)
         {
-            using (var qrGenerator = new QRCodeGenerator())
-            using (var qrCodeData = qrGenerator.CreateQrCode(text, QRCodeGenerator.ECCLevel.Q))
-            using (var qrCode = new QRCode(qrCodeData))
-            using (var bitmap = qrCode.GetGraphic(20))
-            using (var ms = new MemoryStream())
-            {
-                bitmap.Save(ms, ImageFormat.Png);
-                return Convert.ToBase64String(ms.ToArray());
-            }
+            var qrString = new Guid() + text;
+            return qrString.ToString();
         }
     }
 }

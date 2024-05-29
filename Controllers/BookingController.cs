@@ -30,7 +30,27 @@ namespace MEAL_2024_API.Controllers
                 return Ok(bookings);
             }
 
-            [HttpPost]
+        [HttpPost("quick-booking")]
+        public async Task<ActionResult> QuickBooking([FromBody] QuickBookingDTO quickBookingDTO)
+        {
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                await _bookingService.QuickBookingAsync(quickBookingDTO);
+                return Ok();
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost]
             public async Task<ActionResult> CreateBooking([FromBody] BookingCreateDTO bookingCreateDTO)
             {
 

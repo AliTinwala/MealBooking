@@ -44,6 +44,38 @@ namespace MEAL_2024_API.Services
             });
         }
 
+        public async Task QuickBookingAsync(QuickBookingDTO quickBookingDTO)
+        {
+            var today = DateTime.UtcNow.Date;
+            var bookingDateTimeLimit = today.AddDays(1).AddHours(22); // 10 PM of the previous day
+
+
+            if (quickBookingDTO.Date.Date < bookingDateTimeLimit.Date)
+            {
+                throw new InvalidOperationException("Bookings can only be made before 10 PM of the previous day.");
+            }
+
+            var existingBooking = await _bookingRepository.GetBookingsByUserIdAndMealAsync(quickBookingDTO.UserId, quickBookingDTO.Date.Date, quickBookingDTO.MealType);
+
+            if (existingBooking != null)
+            {
+                throw new InvalidOperationException($"User {quickBookingDTO.UserId} already has a booking on {quickBookingDTO.Date.Date.ToShortDateString()}.");
+            }
+
+            var booking = new BookingModel
+            {
+                BookingId = Guid.NewGuid(),
+                UserId = quickBookingDTO.UserId,
+                MealType = quickBookingDTO.MealType,
+                BookingDate = quickBookingDTO.Date.Date,
+                CreatedDate = DateTime.UtcNow,
+                IsCancelled = false
+            };
+            await _bookingRepository.Add(booking);
+            await _couponService.GenerateCoupon(booking.BookingId);
+            await _bookingRepository.SaveChanges();
+        }
+
         public async Task CreateBookingAsync(BookingCreateDTO bookingCreateDTO)
         {
             var today = DateTime.UtcNow.Date;
@@ -133,6 +165,8 @@ namespace MEAL_2024_API.Services
                 throw new InvalidOperationException($"No booking found for {mealType} on {bookingDate.ToShortDateString()} for user {userId}.");
             }
         }
+
+      
 
         //public async Task DeleteBookingAsync(Guid bookingId, string mealType)
         //{
