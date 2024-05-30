@@ -126,22 +126,26 @@ namespace MEAL_2024_API.Controllers
         [HttpPost("change-password")]
         public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDTO changePasswordDTO)
         {
-            //var email = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
-
-            var email = changePasswordDTO.Email;
-            // Check if email is not in the token, use the one from the request body
-            //if (string.IsNullOrEmpty(email))
-            //{
-            //    email = changePasswordDTO.Email;
-            //}
-
-            if (string.IsNullOrEmpty(email))
+            try
             {
-                return BadRequest("Email not found in token or request body");
-            }
+                var email = changePasswordDTO.Email;
 
-            var result = await _userService.ChangePasswordAsync(email, changePasswordDTO);
-            return Ok(result);
+                if (string.IsNullOrEmpty(email))
+                {
+                    return BadRequest("Email not found in request body");
+                }
+
+                var result = await _userService.ChangePasswordAsync(email, changePasswordDTO);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                // Log the exception (optional)
+                // _logger.LogError(ex, "Error changing password");
+
+                return StatusCode(500, "An error occurred while changing the password.");
+            }
         }
+
     }
 }
