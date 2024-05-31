@@ -14,7 +14,8 @@ namespace MealBookingAPI.Data
         {
         }
         public DbSet<Booking>Booking { get; set; }
-        public DbSet<User> User { get; set; }
+        public DbSet<Notification> Notification { get; set; }
+
     }
 
 }

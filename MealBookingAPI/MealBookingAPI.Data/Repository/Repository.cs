@@ -49,5 +49,39 @@ namespace MealBookingAPI.Data.Repository
                 .Select(b => b.BookingForDate)
                 .ToListAsync();
         }
+
+        public async Task<int> GetCountOfUnreadNotificationOfUser(Guid user_id)
+        {
+            return await _dbContext.Notification
+                .Where(n => n.UserId == user_id)
+                .Where(n => n.isRead == false)
+                .Select(n => n.NotificationId)
+                .CountAsync();
+        }
+
+        public async Task<IEnumerable<string>> GetNotificationsForUser(Guid user_id)
+        {
+            return await _dbContext.Notification
+                .Where(b => b.UserId == user_id)
+                .Select(b => b.Message)
+                .ToListAsync();
+        }
+
+        public async Task<int> SetReadNotificationForUser(Guid notification_id)
+        {
+            var notification =  await _dbContext.Notification
+                .FirstOrDefaultAsync(n => n.NotificationId == notification_id);
+            
+            if(notification != null)
+            {
+                notification.isRead = true;
+
+                return await _dbContext.SaveChangesAsync();
+            }
+            else
+            {
+                return 0;
+            }
+        }
     }
 }

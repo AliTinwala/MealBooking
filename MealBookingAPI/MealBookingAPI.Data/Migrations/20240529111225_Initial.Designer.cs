@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MealBookingAPI.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240528040133_Initial")]
+    [Migration("20240529111225_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -56,11 +56,37 @@ namespace MealBookingAPI.Data.Migrations
                     b.ToTable("Booking");
                 });
 
+            modelBuilder.Entity("MealBookingAPI.Data.Models.Notification", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Message")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("isRead")
+                        .HasColumnType("bit");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Notification");
+                });
+
             modelBuilder.Entity("MealBookingAPI.Data.Models.User", b =>
                 {
                     b.Property<Guid>("UserId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("UserId");
 
@@ -68,6 +94,17 @@ namespace MealBookingAPI.Data.Migrations
                 });
 
             modelBuilder.Entity("MealBookingAPI.Data.Models.Booking", b =>
+                {
+                    b.HasOne("MealBookingAPI.Data.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("MealBookingAPI.Data.Models.Notification", b =>
                 {
                     b.HasOne("MealBookingAPI.Data.Models.User", "User")
                         .WithMany()

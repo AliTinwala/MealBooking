@@ -9,8 +9,9 @@ namespace MealBookingAPI.Application.Mapper
         public MapperProfile()
         {
             CreateMap<BookingRequestDTO, Booking>().ReverseMap();
-            CreateMap<Booking,BookingRequestDTO>().ReverseMap();
             CreateMap<Task<Booking>, Booking>().ReverseMap();
+            CreateMap<UserRequestDTO, User>().ReverseMap();
+            CreateMap<NotificationRequestDTO, Notification>().ReverseMap();
         }
     }
 }
