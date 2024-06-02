@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using MealBookingAPI.Application.DTOs;
-using MealBookingAPI.Application.Services.IServices;
 using MealBookingAPI.Data.Models;
 using MealBookingAPI.Data.Repository;
 using MealBookingAPI.Data.Repository.IRepository;
@@ -15,30 +14,28 @@ namespace MealBookingAPI.Application.Controllers
 
         private readonly IRepository<Notification> _repository;
         private readonly IMapper _mapper;
-        private readonly INotificationServices _notificationServices;
 
-        public NotificationController(IRepository<Notification> repository, IMapper mapper, INotificationServices notificationServices)
+        public NotificationController(IRepository<Notification> repository, IMapper mapper)
         {
             _repository = repository;
             _mapper = mapper;
-            _notificationServices = notificationServices;
         }
 
-        [HttpPost]
-        public async Task<IActionResult> CreateNotification(NotificationRequestDTO request, Guid user_id)
+        [HttpPost("{user_id}")]
+        public async Task<IActionResult> CreateNotification([FromBody]NotificationResponseDTO request, [FromRoute]Guid user_id)
         {
             if (ModelState.IsValid)
             {
-                var notification = _mapper.Map<NotificationRequestDTO, Notification>(request);
+                var notification = _mapper.Map<NotificationResponseDTO, Notification>(request);
                 notification.UserId = user_id;
                 var inserted = await _repository.InsertAsync(notification);
                 if (inserted <= 0)
                 {
-                    return BadRequest("Notification not added");
+                    return BadRequest(notification);
                 }
-                else
+                else 
                 {
-                    return Ok("Notification added");
+                    return Ok(notification);
                 }
             }
             else
@@ -48,38 +45,32 @@ namespace MealBookingAPI.Application.Controllers
         }
 
         [HttpGet("{user_id}")]
-        public async Task<IActionResult> GetUnreadNotificationsByUserId(Guid user_id)
+        public async Task<IActionResult> GetNotificationsByUserId(Guid user_id)
         {
-            var unread = await _notificationServices.GetUnreadNotificationsForUser(user_id);
-            return Ok(unread);
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> GetNotificationByUserId(Guid user_id)
-        {
-            var notifications = await _notificationServices.GetNoticationsForUser(user_id);
-            if (notifications.Count() > 0)
+            var notificationList = await _repository.GetNotificationsByUserId(user_id);
+            var notificationDto = _mapper.Map<List<Notification>, List<NotificationRequestDTO>>(notificationList.ToList());
+            if (notificationDto != null)
             {
-                return Ok(notifications);
+                return Ok(notificationDto);
             }
             else
             {
-                return NotFound("Notifications not found");
+                return NotFound(notificationDto);
             }
         }
 
         [HttpPut("{notification_id}")]
         public async Task<IActionResult> SetNotificationAsRead([FromRoute] Guid notification_id)
         {
-            var updated = await _notificationServices.SetReadNotificationForUser(notification_id);
-
-            if (updated > 0)
+            var updated = await _repository.SetReadNotificationForUser(notification_id);
+            var notificationDto = _mapper.Map<Notification, NotificationResponseDTO>(updated);
+            if (notificationDto != null)
             {
-                return Ok("Notification updated");
+                return Ok(notificationDto);
             }
             else
             {
-                return BadRequest("Notification not updated");
+                return BadRequest(notificationDto);
             }
     }
     }

@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using MealBookingAPI.Application.DTOs;
-using MealBookingAPI.Application.Services.IServices;
 using MealBookingAPI.Data.Models;
 using MealBookingAPI.Data.Repository.IRepository;
 using Microsoft.AspNetCore.Mvc;
@@ -14,13 +13,11 @@ namespace MealBookingAPI.Application.Controllers
     {
         private readonly IRepository<Booking> _repository;
         private readonly IMapper _mapper;
-        private readonly IBookingServices _bookingServices;
 
-        public BookingController(IRepository<Booking> repository, IMapper mapper, IBookingServices bookingServices)
+        public BookingController(IRepository<Booking> repository, IMapper mapper)
         {
             _repository = repository;
             _mapper = mapper;
-            _bookingServices = bookingServices;
         }
 
         [HttpPost]
@@ -102,7 +99,7 @@ namespace MealBookingAPI.Application.Controllers
         [HttpGet("{user_id}")]
         public async Task<IActionResult> GetBookingDates(Guid user_id)
         {
-            var dates = await _bookingServices.GetBookingForDates(user_id);
+            var dates = await _repository.GetBookingForDates(user_id);
             if (dates.Count() > 0)
             {
                 return Ok(dates);

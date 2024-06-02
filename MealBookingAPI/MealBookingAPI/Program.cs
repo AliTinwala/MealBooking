@@ -5,8 +5,6 @@ using MealBookingAPI.Data.Repository;
 using AutoMapper;
 using MealBookingAPI.Application.Mapper;
 using System.Runtime.CompilerServices;
-using MealBookingAPI.Application.Services.IServices;
-using MealBookingAPI.Application.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,13 +16,11 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
-    options.UseSqlServer(builder.Configuration.GetConnectionString("WorkLaptop"));
-    //options.UseSqlServer(builder.Configuration.GetConnectionString("HomeLaptop"));
+    //options.UseSqlServer(builder.Configuration.GetConnectionString("WorkLaptop"));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("HomeLaptop"));
 });
 builder.Services.AddSingleton(new MapperConfiguration(x => x.AddProfile(new MapperProfile())).CreateMapper());
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
-builder.Services.AddScoped<IBookingServices,BookingServices>();
-builder.Services.AddScoped<INotificationServices, NotificationServices>();
 builder.Services.AddCors(cors=> cors.AddPolicy("MyPolicy", builder =>
 {
     builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();

@@ -1,8 +1,7 @@
 ﻿namespace MealBookingAPI.Application.DTOs
 {
-    public class NotificationRequestDTO
+    public class NotificationResponseDTO
     {
-        public Guid NotificationId { get; set; }
         public string? Message { get; set; }
         public bool isRead { get; set; }
     }

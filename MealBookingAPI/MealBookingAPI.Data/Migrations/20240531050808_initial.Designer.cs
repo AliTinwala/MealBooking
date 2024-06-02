@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MealBookingAPI.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240529111225_Initial")]
-    partial class Initial
+    [Migration("20240531050808_initial")]
+    partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -58,7 +58,7 @@ namespace MealBookingAPI.Data.Migrations
 
             modelBuilder.Entity("MealBookingAPI.Data.Models.Notification", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<Guid>("NotificationId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
@@ -71,7 +71,7 @@ namespace MealBookingAPI.Data.Migrations
                     b.Property<bool>("isRead")
                         .HasColumnType("bit");
 
-                    b.HasKey("Id");
+                    b.HasKey("NotificationId");
 
                     b.HasIndex("UserId");
 

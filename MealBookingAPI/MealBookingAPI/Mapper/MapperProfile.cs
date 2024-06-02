@@ -12,6 +12,7 @@ namespace MealBookingAPI.Application.Mapper
             CreateMap<Task<Booking>, Booking>().ReverseMap();
             CreateMap<UserRequestDTO, User>().ReverseMap();
             CreateMap<NotificationRequestDTO, Notification>().ReverseMap();
+            CreateMap<NotificationResponseDTO, Notification>().ReverseMap();
         }
     }
 }
