@@ -118,7 +118,7 @@ namespace MEAL_2024_API.Services
           
         }
 
-        public async Task<string> ChangePasswordAsync(string email, ChangePasswordDTO changePasswordDTO)
+        public async Task<Object> ChangePasswordAsync(string email, ChangePasswordDTO changePasswordDTO)
         {
             try
             {
@@ -126,14 +126,22 @@ namespace MEAL_2024_API.Services
                 var user = await _authContext.Users.FirstOrDefaultAsync(u => u.EmailId == email);
                 if (user == null)
                 {
-                    return "User not found";
+                    return (new
+                    {
+                        Success = false,
+                        Message = "User not found"
+                    });
                 }
 
                 //verify the old password
 
                 if (!PasswordHasher.VerifyPassword(changePasswordDTO.OldPassword, user.Password))
                 {
-                    return "Incorrect old Password";
+                    return (new
+                    {
+                        Success = false,
+                        Message = "Incorrect Old Password"
+                    });
                 }
 
                 //update password
@@ -145,7 +153,11 @@ namespace MEAL_2024_API.Services
                     user.Password = PasswordHasher.HashPassword(changePasswordDTO.NewPassword);
                     _authContext.Entry(user).State = EntityState.Modified;
                     await _authContext.SaveChangesAsync();
-                    return "Password changed successfully";
+                    return (new
+                    {
+                        Success = true,
+                        Message = "Password changed successfully"
+                    });
                 }
                 else
                 {

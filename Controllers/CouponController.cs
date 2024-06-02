@@ -42,10 +42,7 @@ namespace MEAL_2024_API.Controllers
         public async Task<IActionResult> RedeemCoupon(Guid couponId)
         {
             var success = await _couponService.RedeemCoupon(couponId);
-            if (!success)
-                return BadRequest("Failed to redeem coupon.");
-
-            return Ok("Coupon redeemed successfully.");
+            return Ok(success);
         }
     }
 }

@@ -60,15 +60,23 @@ namespace MEAL_2024_API.Services
             return await _couponRepository.GetByBookingIdAsync(bookingId);
         }
 
-        public async Task<bool> RedeemCoupon(Guid couponId)
+        public async Task<Object> RedeemCoupon(Guid couponId)
         {
             var coupon = await _couponRepository.GetById(couponId);
             if (coupon == null || coupon.IsRedeemed)
-                return false;
+                return (new
+                {
+                    Success=false,
+                    Message = "Coupon already redeemed"
+                });
 
             coupon.IsRedeemed = true;
             await _couponRepository.Update(coupon);
-            return true;
+            return (new
+            {
+                Success = true,
+                Message = "Coupon Redeemed Successfully!"
+            });
         }
     }
 }

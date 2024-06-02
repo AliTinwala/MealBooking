@@ -6,7 +6,7 @@ namespace MEAL_2024_API.Services.Interfaces
     {
         Task<CouponModel> GenerateCoupon(Guid bookingId);
         Task<CouponModel> GetCouponByBookingId(Guid bookingId);
-        Task<bool> RedeemCoupon(Guid couponId);
+        Task<Object> RedeemCoupon(Guid couponId);
 
         Task DeleteCouponByBookingId(Guid bookingId);
     }

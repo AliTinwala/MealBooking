@@ -16,6 +16,8 @@ namespace MEAL_2024_API.Context
         public DbSet<BookingModel> Bookings {  get; set; }
 
         public DbSet<CouponModel> Coupons { get; set; }
+        public DbSet<FeedbackModel> Feedbacks { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<User>().ToTable("users");

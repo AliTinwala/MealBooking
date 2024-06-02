@@ -26,6 +26,8 @@ builder.Services.AddCors(option =>
         .AllowAnyHeader();
     });
 });
+
+
 builder.Services.AddDbContext<AppDbContext>(option =>
 {
     option.UseSqlServer(builder.Configuration.GetConnectionString("SqlServerConnStr"));

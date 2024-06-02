@@ -137,6 +137,23 @@ namespace MEAL_2024_API.Controllers
 
                 var result = await _userService.ChangePasswordAsync(email, changePasswordDTO);
                 return Ok(result);
+                //if(result == "User not found" || result == "Incorrect old Password")
+                //{
+                //    return BadRequest(new
+                //    {
+                //        StatusCode=400,
+                //        Message = result
+
+                //    });
+                //}
+                //else if(result == "Password changed successfully")
+                //{
+                //    return Ok(result);
+                //}
+                //else
+                //{
+                //    return BadRequest(result);
+                //}
             }
             catch (Exception ex)
             {

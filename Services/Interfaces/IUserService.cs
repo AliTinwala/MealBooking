@@ -10,6 +10,6 @@ namespace MEAL_2024_API.Services.Interfaces
         Task RegisterUserAsync(User userObj);
         Task SendResetPasswordEmailAsync(string email);
         Task<string> ResetPasswordAsync(ResetPasswordDTO resetPasswordDTO);
-        Task<string> ChangePasswordAsync(string email, ChangePasswordDTO changePasswordDTO);
+        Task<Object> ChangePasswordAsync(string email, ChangePasswordDTO changePasswordDTO);
     }
 }
