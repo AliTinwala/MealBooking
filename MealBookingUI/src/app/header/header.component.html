@@ -1,0 +1,41 @@
+<nav class="navbar navbar-expand-lg fixed-top">
+    <div class="container-fluid">
+      <div class="container head">
+        <a href="#" class="navbar-brand">
+          <div class="logoW-wrapper">
+            <img src="../../../assets/images/logo-white.svg" alt="Rishabh Software">
+            <span>Meal Facility</span>
+          </div>
+      </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a class="nav-link" aria-current="page" routerLink="view-calendar" href="#">Calendar</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#" routerLink="view-booking">Booking List</a>
+            </li>
+          </ul>
+          <div class="h-100 d-lg-inline-flex align-items-center">
+            <ul class="app-nav">
+              <!--Notification Menu-->
+              <li class="dropdown"><a class="app-nav__item notification-num" href="#" routerLink="notifications" data-toggle="dropdown" aria-label="Show notifications"><i class="icon-bell"></i>
+              <span class="num">{{ this.unread }}</span>
+              </a></li>
+              <!-- User Menu-->
+              <li class="dropdow"><a class="app-nav__item dropdown-toggle" href="#" data-toggle="dropdown" aria-label="Open Profile Menu">Admin</a>
+                <ul class="dropdown-menu settings-menu dropdown-menu-left">
+                  <li><a class="dropdown-item" href="#" data-toggle="modal" data-target="#changepwdModal">Change Password</a></li>
+                  <li><a class="dropdown-item" href="#">Logout</a></li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+</nav>
+<div class="spacer"></div>

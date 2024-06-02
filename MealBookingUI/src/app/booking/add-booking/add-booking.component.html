@@ -1,0 +1,56 @@
+<form [formGroup]="addBookingFrom" (ngSubmit)="onAddBooking()" novalidate>
+    <div class="container-fluid">
+        <div class="container pt-30 mb-30">
+            <div class="container-head">
+                <div class="container-left">
+                <h3 class="container-title">Book a Meal</h3>
+                </div>
+                <div class="container-right">
+                </div>
+            </div>
+            <div class="content-tab">
+                <a class="content-tab_link active">New Booking</a>
+            </div>
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-5"></div>
+                    <div class="col-xl-5">
+                        <label>Meal Type: </label>
+                        <mat-radio-group formControlName="mealType">
+                        <mat-radio-button value="Lunch">Lunch</mat-radio-button>
+                        <mat-radio-button value="Dinner">Dinner</mat-radio-button>
+                        </mat-radio-group>
+                    </div>
+                    <div class="col-lg-5"></div>
+                </div>
+                <div class="spacer"></div>
+                <div class="row">
+                    <div class="col-lg-5"></div>
+                    <div class="col-xl-5">
+                        <label>Select Days: </label><br/><br/>
+                        <mat-form-field>
+                            <mat-label>Enter a date range</mat-label>
+                            <mat-date-range-input [formGroup]="range" [dateFilter]="myFilter" [min]="minDate" [rangePicker]="picker">
+                            <input matStartDate formControlName="start" placeholder="Start date">
+                            <input matEndDate formControlName="end" placeholder="End date">
+                            </mat-date-range-input>
+                            <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                            <mat-date-range-picker #picker></mat-date-range-picker>
+                        </mat-form-field>
+                        <div>
+                            Number of days selected: {{ numberOfDays }}
+                        </div>
+                    </div>
+                    <div class="col-lg-5"></div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-5"></div>
+                    <div class="col-xl-5">
+                        <button type="submit" class="btn btn-primary btn-block">Book Meal</button>
+                    </div>
+                    <div class="col-lg-5"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

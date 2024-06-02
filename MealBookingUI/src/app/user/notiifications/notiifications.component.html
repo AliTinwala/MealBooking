@@ -1,0 +1,37 @@
+<div class="container-fluid">
+    <div class="container pt-30 mb-30">
+        <div class="container-head">
+            <div class="container-left">
+            <h3 class="container-title">Notification List</h3>
+            </div>
+            <div class="container-right">
+              <!-- <a routerLink="/add-booking" aria-label="Add Booking" class="btn btn-primary" data-toggle="modal" data-target="#addBookingModal">Add Booking</a> -->
+            </div>
+        </div>
+        <div class="content-tab">
+            <a class="content-tab_link active"> Your Notifications</a>
+        </div>
+        <div>
+          <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+            <ng-container matColumnDef="Notification Messages">
+              <th mat-header-cell *matHeaderCellDef> Notification Messages </th>
+              <td mat-cell *matCellDef="let element"> {{ element.message }} </td>
+            </ng-container>
+            <ng-container matColumnDef="Is Read">
+              <th mat-header-cell *matHeaderCellDef> Is Read </th>
+              <td mat-cell *matCellDef="let element"> {{ element.isRead }} </td>
+            </ng-container>
+            <ng-container matColumnDef="Action">
+              <th mat-header-cell *matHeaderCellDef> Action </th>
+              <td mat-cell *matCellDef="let element">
+                <button mat-flat-button (click)="readNotification(element)" color="primary">Read</button>
+              </td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+        <br/>
+        <button mat-flat-button (click)="onChangePassword()" color="warn">Change Password</button>
+        </div>
+    </div>
+</div>

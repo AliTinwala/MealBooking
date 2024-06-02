@@ -1,0 +1,31 @@
+<div class="container-fluid">
+    <div class="container pt-30 mb-30">
+        <div class="container-head">
+            <div class="container-left">
+            <h3 class="container-title">Booking List</h3>
+            </div>
+            <div class="container-right">
+              <a routerLink="/add-booking" aria-label="Add Booking" class="btn btn-primary" data-toggle="modal" data-target="#addBookingModal">Add Booking</a>
+            </div>
+        </div>
+        <div class="content-tab">
+            <a class="content-tab_link active">Your Bookings</a>
+        </div>
+        <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+            <ng-container matColumnDef="Booking Type">
+              <th mat-header-cell *matHeaderCellDef> Booking Type </th>
+              <td mat-cell *matCellDef="let element"> {{element.mealType}} </td>
+            </ng-container>
+            <ng-container matColumnDef="Booking Date">
+              <th mat-header-cell *matHeaderCellDef> Booking Date </th>
+              <td mat-cell *matCellDef="let element"> {{element.bookingDate | date:'dd MMMM, yyyy, (EEEE)'}} </td>
+            </ng-container>
+            <ng-container matColumnDef="Booking For Date">
+              <th mat-header-cell *matHeaderCellDef> Booking For Date </th>
+              <td mat-cell *matCellDef="let element"> {{element.bookingForDate | date: 'dd MMMM, yyyy, (EEEE)'}} </td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+          </table>
+    </div>
+</div>
